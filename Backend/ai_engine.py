@@ -2,13 +2,22 @@ import google.generativeai as genai
 import json, base64, tempfile, os, re
 from pdf2image import convert_from_path
 from PIL import Image
+from google.generativeai.types import GenerationConfig
 import io
 from config import GEMINI_API_KEY
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-pro_model   = genai.GenerativeModel("gemini-2.5-pro")
-flash_model = genai.GenerativeModel("gemini-2.5-flash")
+
+pro_model = genai.GenerativeModel(
+    "gemini-2.5-pro",
+    generation_config=GenerationConfig(temperature=0.0)
+)
+
+flash_model = genai.GenerativeModel(
+    "gemini-2.5-flash-lite",   # 1000/day free
+    generation_config=GenerationConfig(temperature=0.0)
+)
 
 # This flag tracks if Pro limit is hit for the day
 pro_exhausted = False
@@ -156,6 +165,14 @@ EVALUATION RULES:
 8. CROSSED OUT → ignore [CROSSED OUT: ...] entirely
 9. Never cut marks for handwriting or presentation
 10. Benefit of doubt when unclear. Half marks acceptable.
+11. 1 MARK QUESTIONS — be strict. Only award 1 mark if answer is
+    completely correct. No partial marks for 1 mark questions.
+12. CALCULATION QUESTIONS — if final answer is wrong due to 
+    arithmetic error but method is correct, deduct at least 1 mark.
+    Never give full marks if final answer is wrong.
+13. WRONG ANSWERS — if student wrote a clearly wrong value 
+    (example: pH=4 when correct is pH=3), deduct marks even if 
+    formula is correct. Method marks maximum 50% for wrong answer.
 
 Return ONLY valid JSON:
 {{

@@ -1,9 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from routers import auth,evaluate,results
+from db.database import Base,engine
+
 
 app=FastAPI(
     title="Eval-AI"
 )
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,6 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True 
 )
+
+app.include_router(auth.router)
+app.include_router(evaluate.router)
+app.include_router(results.router)
 
 @app.get('/')
 def root():

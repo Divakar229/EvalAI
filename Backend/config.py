@@ -13,7 +13,6 @@ def get(key:str) -> str :
 
 
 DATABASE_URL=get("DATABASE_URL")
-OPENAI_API_KEY = get("OPENAI_API_KEY")
 GEMINI_API_KEY = get("GEMINI_API_KEY")
 SECRET_KEY     = get("SECRET_KEY")
 ALGORITHM      = "HS256"

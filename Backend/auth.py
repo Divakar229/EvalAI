@@ -8,15 +8,15 @@ from db.database import get_db
 from models.models import Teacher
 from config import SECRET_KEY,ALGORITHM,TOKEN_EXPIRE
 
-pwd_context=CryptContext(schemes=["bcrypt"],deprecated="auto")
-oauth2_scheme=OAuth2PasswordBearer("/auth/login")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
+oauth2_scheme=OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def hash_password(password:str)->str:
     return pwd_context.hash(password)
 
-def verify_password(plain:str,hash:str) -> bool:
-    return pwd_context.verify(plain,hash)
+def verify_password(plain:str,hashed:str) -> bool:
+    return pwd_context.verify(plain,hashed)
 
 def create_token(data: dict) -> str:
     payload = data.copy()

@@ -1,0 +1,17 @@
+#enviroment folder
+env/
+
+# .env
+.env
+
+# vscode
+.vscode
+
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# init files
+__init__.py
