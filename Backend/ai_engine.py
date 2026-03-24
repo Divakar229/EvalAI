@@ -15,7 +15,7 @@ pro_model = genai.GenerativeModel(
 )
 
 flash_model = genai.GenerativeModel(
-    "gemini-2.5-flash-lite",   # 1000/day free
+    "gemini-2.5-flash-lite",  
     generation_config=GenerationConfig(temperature=0.0)
 )
 
@@ -33,8 +33,8 @@ def call_model(prompt, images=None, force_flash=False):
             for img in images:
                 parts.append({
                     "inline_data": {
-                        "mime_type": "image/jpeg",
-                        "data": image_to_b64(img)
+                        "mime_type": "image/jpeg",   # file format
+                        "data": image_to_b64(img)    # actual image content
                     }
                 })
         parts.append(prompt)
