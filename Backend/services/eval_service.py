@@ -10,7 +10,7 @@ def save_evaluation(
     subject: str,
     exam_name: str,
     teacher_id: int,
-    db: Session
+    db: Session 
 ) -> int:
     evaluation = Evaluation(
         teacher_id=teacher_id,

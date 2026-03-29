@@ -19,7 +19,7 @@ flash_model = genai.GenerativeModel(
     generation_config=GenerationConfig(temperature=0.0)
 )
 
-# This flag tracks if Pro limit is hit for the day
+# This flag tracks if Pro limit
 pro_exhausted = False
 
 
@@ -58,7 +58,7 @@ def call_model(prompt, images=None, force_flash=False):
             print("Pro limit hit — switching to Flash for rest of the day")
             pro_exhausted = True
             response = flash_model.generate_content(build_parts())
-            return response.text
+            return response.text  
         else:
             raise e
 
