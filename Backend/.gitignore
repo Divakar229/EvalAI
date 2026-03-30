@@ -1,0 +1,14 @@
+# Environment
+env/
+.env
+
+# VS Code
+.vscode/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Init files
+__init__.py
