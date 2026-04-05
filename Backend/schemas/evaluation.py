@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 
-# ── Question part (for choice questions) ─────────────────────────────────────
+#----- Question Part (For Choice Questions)---------
 
 class QuestionPart(BaseModel):
     part:          str
@@ -13,7 +13,7 @@ class QuestionPart(BaseModel):
     marks:         Optional[float] = None
 
 
-# ── Single question result ────────────────────────────────────────────────────
+# ------ Single question result -----------------
 
 class QuestionResult(BaseModel):
     question_number:        str
@@ -28,7 +28,7 @@ class QuestionResult(BaseModel):
     parts:                  Optional[list[QuestionPart]] = None
 
 
-# ── Full evaluation result ────────────────────────────────────────────────────
+#----------- Final evaluation result ------------------------
 
 class EvaluationResult(BaseModel):
     marks_obtained:  float
@@ -39,13 +39,13 @@ class EvaluationResult(BaseModel):
     questions:       list[QuestionResult]
 
 
-# ── What API returns after saving to DB ──────────────────────────────────────
+# -------- What API returns after saving to DB --------
 
 class EvaluationResponse(EvaluationResult):
     evaluation_id: int
 
 
-# ── Single row in history list ────────────────────────────────────────────────
+# ------- Evaluation Summary -----------------------
 
 class EvaluationSummary(BaseModel):
     id:              int
@@ -63,7 +63,7 @@ class EvaluationSummary(BaseModel):
         from_attributes = True
 
 
-# ── Full detail view ──────────────────────────────────────────────────────────
+# ------ Full detail view (of Evaluation) ----------------
 
 class EvaluationDetail(BaseModel):
     id:              int

@@ -11,17 +11,21 @@ from config import SECRET_KEY,ALGORITHM,TOKEN_EXPIRE
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 oauth2_scheme=OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-
+#----- For Password Hashing ------
 def hash_password(password:str)->str:
     return pwd_context.hash(password)
 
+#----- For Password Verification -----
 def verify_password(plain:str,hashed:str) -> bool:
     return pwd_context.verify(plain,hashed)
 
+
+#--------- To create Token --------
 def create_token(data: dict) -> str:
-    payload = data.copy()
-    payload["exp"] = datetime.utcnow() + timedelta(hours=TOKEN_EXPIRE)
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    payload=data.copy()
+    payload["exp"]=datetime.utcnow+timedelta(hours=TOKEN_EXPIRE)
+    return jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
+
 
 
 def get_current_teacher(
@@ -29,10 +33,12 @@ def get_current_teacher(
     db:  Session = Depends(get_db)
 ) -> Teacher:
     
+    # wrong credentials(info to prove your identity)
     credentials_error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or expired token",
-        headers={"WWW-Authenticate": "Bearer"},
+        # Brearer will say the type of scheme(eg:Token)
+        headers={"Authentication": "Bearer"},
     )
 
     try:

@@ -1,8 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-
-# ── Requests (what comes IN) ──────────────────────────────────────────────────
-
+#----REQUEST-------
 class RegisterRequest(BaseModel):
     name: str
     email: EmailStr
@@ -10,17 +8,18 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+    email:EmailStr
+    password:str
 
 
-# ── Responses (what goes OUT) ─────────────────────────────────────────────────
+# ----RESPONSES----(output what will visible)
 
 class AuthResponse(BaseModel):
     token: str
     name: str
     email: str
 
+# helps pydantic to read sqlalchemy object attributes
     class Config:
         from_attributes = True
 

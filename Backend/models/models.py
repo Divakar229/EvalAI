@@ -1,47 +1,46 @@
-from sqlalchemy import Column,String,Integer,DateTime,ForeignKey,Float,Text,Boolean
 from db.database import Base
 from datetime import datetime
-from sqlalchemy.orm import relationship
-
-
+from sqlalchemy import ForeignKey,Text
+from sqlalchemy.orm import relationship,Mapped,mapped_column
 
 class Teacher(Base):
-    __tablename__ = "teachers"
-    id            = Column(Integer, primary_key=True, index=True)
-    name          = Column(String, nullable=False)
-    email         = Column(String, unique=True, index=True, nullable=False)
-    password_hash = Column(String, nullable=False)
-    created_at    = Column(DateTime, default=datetime.utcnow)
-    evaluations   = relationship("Evaluation", back_populates="teacher")
+    __tablename__="teachers"
+    id:Mapped[int]=mapped_column(primary_key=True,index=True)
+    name:Mapped[str]=mapped_column()
+    email:Mapped[str]=mapped_column(unique=True,index=True)
+    password_hash:Mapped[str]=mapped_column()
+    created_at:Mapped[datetime]=mapped_column(default=datetime.utcnow)
+    evaluations:Mapped[list["Evaluation"]]=relationship(back_populates="teacher")
 
 
 class Evaluation(Base):
-    __tablename__ = "evaluations"
-    id              = Column(Integer, primary_key=True, index=True)
-    teacher_id      = Column(Integer, ForeignKey("teachers.id"), nullable=False)
-    student_name    = Column(String, nullable=False)
-    roll_number     = Column(String, nullable=False)
-    subject         = Column(String, nullable=False)
-    exam_name       = Column(String, nullable=False)
-    total_marks     = Column(Integer, nullable=False)
-    marks_obtained  = Column(Float, nullable=False)
-    percentage      = Column(Float, nullable=False)
-    grade           = Column(String, nullable=False)
-    overall_remarks = Column(Text, nullable=False)
-    evaluated_at    = Column(DateTime, default=datetime.utcnow)
-    teacher         = relationship("Teacher", back_populates="evaluations")
-    questions       = relationship("QuestionResult", back_populates="evaluation", cascade="all, delete")
+    __tablename__="evaluations"
+    id:Mapped[int]=mapped_column(primary_key=True,index=True)
+    teacher_id:Mapped[int]=mapped_column(ForeignKey("teachers.id"))
+    student_name:Mapped[str]=mapped_column()
+    roll_number:Mapped[str]=mapped_column()
+    subject:Mapped[str]=mapped_column()
+    exam_name:Mapped[str]=mapped_column()
+    total_marks:Mapped[int]=mapped_column()
+    marks_obtained:Mapped[float]=mapped_column()
+    percentage:Mapped[float]=mapped_column()
+    grade:Mapped[str]=mapped_column()
+    overall_remarks:Mapped[str]=mapped_column(Text)
+    evaluated_at:Mapped[datetime]=mapped_column(default=datetime.utcnow)
+    teacher:Mapped["Teacher"]=relationship(back_populates="evaluations")
+    questions:Mapped[list["QuestionResult"]]=relationship(back_populates="evaluation",cascade="all,delete")
 
 
 class QuestionResult(Base):
-    __tablename__ = "question_results"
-    id              = Column(Integer, primary_key=True, index=True)
-    evaluation_id   = Column(Integer, ForeignKey("evaluations.id"), nullable=False)
-    question_number = Column(String, nullable=False)
-    total_marks     = Column(Float, nullable=False)
-    marks_awarded   = Column(Float, nullable=False)
-    status          = Column(String, nullable=False)   # answered / blank / partial
-    feedback        = Column(Text, nullable=False)
-    is_choice       = Column(Boolean, default=False)
-    evaluation      = relationship("Evaluation", back_populates="questions")
-
+    __tablename__="question_results"
+    id:Mapped[int]=mapped_column(primary_key=True,index=True)
+    evaluation_id:Mapped[int]=mapped_column(ForeignKey("evaluations.id"))
+    #"Que1","Que2 a"
+    question_number:Mapped[str]=mapped_column()
+    total_marks:Mapped[float]=mapped_column()
+    marks_awarded:Mapped[float]=mapped_column()
+    # answered/blank/partial
+    status:Mapped[str]=mapped_column()
+    feedback:Mapped[str]=mapped_column(Text)
+    is_choice:Mapped[bool]=mapped_column(default=False)
+    evaluation:Mapped["Evaluation"]=relationship(back_populates="questions")
