@@ -9,8 +9,8 @@ from config import GEMINI_API_KEY
 genai.configure(api_key=GEMINI_API_KEY)
 
 
-pro_model = genai.GenerativeModel(
-    "gemini-2.5-pro",
+ocr_model = genai.GenerativeModel(
+    "gemini-2.5-flash",
     generation_config=GenerationConfig(temperature=0.0)
 )
 
@@ -19,19 +19,20 @@ flash_model = genai.GenerativeModel(
     generation_config=GenerationConfig(temperature=0.0)
 )
 
-# This flag tracks if Pro limit
-pro_exhausted = False
+# A flag to tracks if Pro limit hit 
+ocr_exhausted = False
 
 
 def call_model(prompt, images=None, force_flash=False):
-    global pro_exhausted
+    global ocr_exhausted
 
-    # Build parts list for Gemini
+    # Build parts list (to send data to Gemini) for Gemini
     def build_parts():
         parts = []
         if images:
             for img in images:
                 parts.append({
+                    # sending directly the file content
                     "inline_data": {
                         "mime_type": "image/jpeg",   # file format
                         "data": image_to_b64(img)    # actual image content
@@ -40,23 +41,24 @@ def call_model(prompt, images=None, force_flash=False):
         parts.append(prompt)
         return parts
 
-    # Always use Flash for evaluation (force_flash=True)
-    # Or if Pro already exhausted today
-    if force_flash or pro_exhausted:
+    # Always use Flash Lite for evaluation (force_flash=True)
+    # Or if flash already exhausted today
+    if force_flash or ocr_exhausted:
         response = flash_model.generate_content(build_parts())
         return response.text
 
-    # Try Pro for OCR
+    # Try 2.5 flash for OCR(eg:for cursive writing)
     try:
-        response = pro_model.generate_content(build_parts())
-        print("OCR: Gemini 2.5 Pro")
+        response = ocr_model.generate_content(build_parts())
+        print("OCR: Gemini 2.5 Flash")
         return response.text
 
     except Exception as e:
         error = str(e).lower()
+        print(f"ocr flash failed with: {e}")
         if "429" in error or "quota" in error or "rate" in error or "exhausted" in error:
-            print("Pro limit hit — switching to Flash for rest of the day")
-            pro_exhausted = True
+            print("Flash ocr limit hit — switching to Flash for rest of the day")
+            ocr_exhausted = True
             response = flash_model.generate_content(build_parts())
             return response.text  
         else:
@@ -87,7 +89,7 @@ def clean_json(text: str) -> str:
 
 
 def extract_text(images: list, hint: str) -> str:
-    """Uses Pro. Falls back to Flash if Pro limit hit."""
+    """Uses Flash for ocr. Falls back to Flash-lite if flash limit hit."""
     all_text = []
     for i in range(0, len(images), 4):
         batch = images[i:i + 4]
@@ -100,7 +102,7 @@ def extract_text(images: list, hint: str) -> str:
 - Do not correct spelling or grammar
 - Output ONLY raw transcription"""
 
-        # force_flash=False → tries Pro first, falls back if needed
+        # force_flash=False → tries flash first, falls back if needed
         text = call_model(prompt, images=batch, force_flash=False)
         all_text.append(text)
 

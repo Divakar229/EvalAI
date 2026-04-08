@@ -45,10 +45,7 @@ def save_evaluation(
 
 def get_all_evaluations(teacher_id: int, db: Session) -> list:
     evals = (
-        db.query(Evaluation)
-        .filter(Evaluation.teacher_id == teacher_id)
-        .order_by(Evaluation.evaluated_at.desc())
-        .all()
+        db.query(Evaluation).filter(Evaluation.teacher_id == teacher_id).order_by(Evaluation.evaluated_at.desc()).all()
     )
     return [
         {
@@ -69,9 +66,7 @@ def get_all_evaluations(teacher_id: int, db: Session) -> list:
 
 def get_evaluation_by_id(evaluation_id: int, teacher_id: int, db: Session) -> dict:
     e = (
-        db.query(Evaluation)
-        .filter(Evaluation.id == evaluation_id, Evaluation.teacher_id == teacher_id)
-        .first()
+        db.query(Evaluation).filter(Evaluation.id == evaluation_id, Evaluation.teacher_id == teacher_id).first()
     )
     if not e:
         return None

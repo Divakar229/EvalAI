@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, Form, Depends, HTTPException
+from fastapi import APIRouter, File, UploadFile, Form, Depends, HTTPException,status
 from sqlalchemy.orm import Session
 from db.database import get_db
 from models.models import Teacher
@@ -11,6 +11,8 @@ router = APIRouter(prefix="/evaluate", tags=["evaluate"])
 
 @router.post("")
 async def evaluate(
+    # File() --> calling fun will create a obj and this obj will have metadata(instructions for fastapi(eg validation rules and content-type multipart/form-data)) 
+    # uploadFile ---> is a class used to handle file data efficiently it contains file,filename,content type  
     question_paper: UploadFile = File(...),
     answer_key:     UploadFile = File(...),
     student_answer: UploadFile = File(...),
@@ -51,4 +53,6 @@ async def evaluate(
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e))

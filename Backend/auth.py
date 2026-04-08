@@ -23,7 +23,7 @@ def verify_password(plain:str,hashed:str) -> bool:
 #--------- To create Token --------
 def create_token(data: dict) -> str:
     payload=data.copy()
-    payload["exp"]=datetime.utcnow+timedelta(hours=TOKEN_EXPIRE)
+    payload["exp"]=datetime.utcnow()+timedelta(hours=TOKEN_EXPIRE)
     return jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
 
 
